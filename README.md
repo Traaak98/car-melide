@@ -1,6 +1,10 @@
 # La Car-Mélide
 
+<div align="center">
+
 ![Leodagan veut tout cramer](/img/kaamelott-leodagan.gif)
+
+</div>
 
 Vous avez essayé la catapulte ?
  - Lionnel Astier, Kaamelott, Livre II, _Seli et les rongeurs_, écrit par Alexandre Astier.
