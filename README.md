@@ -1,6 +1,7 @@
 # La Car-Mélide
 
-![Leodagan veut tout cramer](/img/kaamelott-leodagan.gif)*Comme le dit si bien le roi de Carmélide, il est souvent plus sain de tout cramer*
+![Leodagan veut tout cramer](/img/kaamelott-leodagan.gif)
+*Comme le dit si bien le roi de Carmélide, il est souvent plus sain de tout cramer*
 
 Vous avez essayé la catapulte ?
  - Lionnel Astier, Kaamelott, Livre II, _Seli et les rongeurs_, écrit par Alexandre Astier.
