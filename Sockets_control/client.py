@@ -40,22 +40,19 @@ def client() -> None:
     """
     global STEERING, SPEED
 
-    """
     sock = socket.socket()
     sock.connect((HOST, PORT))
-    """
+
     speedmax = 20
     run = True
     while run:
-        """
         data = sock.recv(1024).decode()
-        if data == 'exit':
-            print('Connection closed by the server')
-            run = False
-        else:
-            print('Received from server: ' + data)
-        """
-        
+        [x, y, theta, omega] = data.split(',')
+        x = float(x.split(':')[1])
+        y = float(y.split(':')[1])
+        theta = float(theta.split(':')[1])
+        omega = float(omega.split(':')[1])
+
         display("STEERING : " + str(round(STEERING,4)), y=-20)
         display("SPEED : " + str(round(SPEED,4)), y=20)
         display("RIGHT: +Steering", x=-WINDOW_SIZE[0]//4, y=-100)
@@ -63,11 +60,13 @@ def client() -> None:
         display("UP: +Speed", x=-WINDOW_SIZE[0]//4, y=-80)
         display("DOWN: -Speed", x=WINDOW_SIZE[0]//4, y=-80)
         display("ESC: Quit", y=100)
-        
+
         pygame.event.pump()
         keys = pygame.key.get_pressed()
         if keys[K_ESCAPE]:
             run = False
+            message = "exit"
+            sock.send(message.encode())
         elif keys[K_RIGHT]:
             STEERING += 0.01
         elif keys[K_LEFT]:
@@ -76,19 +75,18 @@ def client() -> None:
             SPEED += 0.1
         elif keys[K_DOWN]:
             SPEED -= 0.1
-            
+
         if STEERING > 180:
             STEERING = 180
         elif STEERING < -180:
             STEERING = -180
-        
+
         if SPEED > speedmax:
             SPEED = speedmax
         elif SPEED < -speedmax:
             SPEED = -speedmax
         screen.fill((159, 182, 205))
-           
-    #sock.close()
+    sock.close()
 
 if __name__ == '__main__':
     pygame.init()
@@ -100,9 +98,9 @@ if __name__ == '__main__':
     SPEED = 0
     FONT = pygame.font.Font(None, 24)
     WINDOW_SIZE = (320, 240)
-    
+
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
     screen = pygame.display.set_mode(WINDOW_SIZE)
     pygame.display.set_caption('Commande')
-    
+
     client()

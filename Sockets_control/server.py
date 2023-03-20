@@ -17,9 +17,6 @@ __status__ = "Production"
 
 import socket
 
-HOST = socket.gethostname()
-PORT = 5400
-
 def sysCall_thread() -> None:
     sim.addLog(sim.verbosity_scriptinfos, "Server started")
     sim.setThreadAutomaticSwitch(False)
@@ -29,27 +26,34 @@ def sysCall_thread() -> None:
     s.bind((host, port))
     s.listen(1)
     c, addr = s.accept()
-    print("Connection from: " + str(addr))
+    sim.addLog(sim.verbosity_scriptinfos, "Connection from: " + str(addr))
     while True:
         objHandle = sim.getObject('/MainBodyTubeDyn', {})
-        p = sim.getObjectPosition(objHandle, -1)
-        message = "x: %.3f,y: %.3f,z: %.3f"%(p[0],p[1],p[2])
+        position = sim.getObjectPosition(objHandle, -1)
+        orientation = sim.getObjectOrientation(objHandle, -1)
+        jointHandle = sim.getJoint('/WheelJoint', {})
+        velocity=sim.getJointVelocity(jointHandle)
+        
+        message = "x: %.3f, y: %.3f, theta: %.3f, omega: %.3f"%(position[0],position[1],orientation[0], velocity[0])
         sim.addLog(sim.verbosity_scriptinfos, message)
         c.send(message.encode())
         
         data = c.recv(1024).decode()
-        sim.addLog(sim.verbosity_scriptinfos, data)
-        #format : steering: 0.0, speed: 0.0
-        [steering, speed] = data.split(',')
-        steering = float(steering.split(':')[1])
-        speed = float(speed.split(':')[1])
-        jointSteering = sim.getObject('/MainBodyTubeDyn/Steering', {})
-        jointSpeed = sim.getObject('/MainBodyTubeDyn/Steering/ForkLeftDyn/FrontMotor', {})
-        sim.setJointTargetPosition(jointSteering, steering)
-        sim.setJointTargetVelocity(jointSpeed, speed)
-        
+        if data == "exit":
+            break
+        else:
+            #format : steering: 0.0, speed: 0.0
+            [steering, speed] = data.split(',')
+            steering = float(steering.split(':')[1])
+            speed = float(speed.split(':')[1])
+            jointSteering = sim.getObject('/MainBodyTubeDyn/Steering', {})
+            jointSpeed = sim.getObject('/MainBodyTubeDyn/Steering/ForkLeftDyn/FrontMotor', {})
+            sim.setJointTargetPosition(jointSteering, steering)
+            sim.setJointTargetVelocity(jointSpeed, speed)
         sim.switchThread()
     c.close()
 
 if __name__ == '__main__':
+    HOST = socket.gethostname()
+    PORT = 5400
     sysCall_thread()
