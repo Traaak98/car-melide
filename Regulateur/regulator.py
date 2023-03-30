@@ -79,6 +79,19 @@ def phi_dphi(X, centre, Morph):
 
 
 def regulateur_vector(X, centre, Morph, w_cons):
+    """Régule le robot pour suivre un cercle ou une ellipse
+
+    Args:
+        X (list): [x, y, theta, w] vecteur d'état du robot
+        centre (tuple<float,float>): centre du cercle ou de l'ellipse
+        Morph (tuple<float,float>): matrice de morphing (2x2)
+        w_cons (float): vitesse de consigne
+
+    Returns:
+        numpy.ndarray: [u1, u2], consignes en radians(guidon) et rd/s
+    """
+
+
     vec, dvec = phi_dphi(X, centre, Morph)
 
     x, y, theta, w = X.flatten()
