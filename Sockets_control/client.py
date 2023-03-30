@@ -19,6 +19,8 @@ import pygame
 from math import pi
 from pygame.locals import *
 
+STEERING, SPEED = 0, 0
+
 def display(str : str, x=0, y=0) -> None:
     """Display text on the screen
 
@@ -43,7 +45,7 @@ def client() -> None:
     sock = socket.socket()
     sock.connect((HOST, PORT))
 
-    speedmax = 20
+    speedmax = 30
     run = True
     while run:
         data = sock.recv(1024).decode()
@@ -85,7 +87,12 @@ def client() -> None:
             SPEED = speedmax
         elif SPEED < -speedmax:
             SPEED = -speedmax
+
+        message = "STEERING:" + str(STEERING) + ",SPEED:" + str(SPEED)
+        sock.send(message.encode())
+
         screen.fill((159, 182, 205))
+
     sock.close()
 
 if __name__ == '__main__':
@@ -93,9 +100,7 @@ if __name__ == '__main__':
     pygame.font.init()
 
     HOST = socket.gethostname()
-    PORT = 5400
-    STEERING = 0
-    SPEED = 0
+    PORT = 5398
     FONT = pygame.font.Font(None, 24)
     WINDOW_SIZE = (320, 240)
 
