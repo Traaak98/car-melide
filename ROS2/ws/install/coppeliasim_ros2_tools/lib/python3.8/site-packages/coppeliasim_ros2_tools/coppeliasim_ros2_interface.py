@@ -74,11 +74,13 @@ class SuperInterface(Node):
     # Get latitude and longitude from CoppeliaSim as 2 simple Float64 topics
     def listener_callback_lat(self, msg):
         self.lat = msg.data
-        self.get_logger().info('Subscribing: lat: %.6f' % (self.lat))
+        self.get_logger().info('Subscribing: lat: %.8f' % (self.lat))
+        print('Subscribing: lat: %.8f' % (self.lat))
 
     def listener_callback_lon(self, msg):
         self.lon = msg.data
-        self.get_logger().info('Subscribing: lon: %.6f' % (self.lon))
+        self.get_logger().info('Subscribing: lon: %.8f' % (self.lon))
+        print('Subscribing: lon: %.8f' % (self.lon))
 
 
 def main(args=None):

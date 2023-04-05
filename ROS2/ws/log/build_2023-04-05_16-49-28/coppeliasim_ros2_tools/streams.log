@@ -1,0 +1,24 @@
+[0.439s] Invoking command in '/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/src/coppeliasim_ros2_tools': PYTHONPATH=/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/prefix_override:/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/coppeliasim_ros2_tools build --build-base /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/build install --record /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/install.log --install-scripts $base/lib/coppeliasim_ros2_tools --single-version-externally-managed
+[0.575s] running egg_info
+[0.575s] writing ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/PKG-INFO
+[0.575s] writing dependency_links to ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/dependency_links.txt
+[0.575s] writing entry points to ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/entry_points.txt
+[0.575s] writing requirements to ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/requires.txt
+[0.576s] writing top-level names to ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/top_level.txt
+[0.599s] reading manifest file '../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/SOURCES.txt'
+[0.600s] writing manifest file '../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/SOURCES.txt'
+[0.600s] running build
+[0.600s] running build_py
+[0.600s] copying coppeliasim_ros2_tools/coppeliasim_ros2_interface.py -> /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/build/lib/coppeliasim_ros2_tools
+[0.600s] running install
+[0.601s] running install_lib
+[0.601s] copying /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/build/lib/coppeliasim_ros2_tools/coppeliasim_ros2_interface.py -> /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages/coppeliasim_ros2_tools
+[0.601s] byte-compiling /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages/coppeliasim_ros2_tools/coppeliasim_ros2_interface.py to coppeliasim_ros2_interface.cpython-38.pyc
+[0.603s] running install_data
+[0.603s] running install_egg_info
+[0.604s] removing '/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages/coppeliasim_ros2_tools-0.0.0-py3.8.egg-info' (and everything under it)
+[0.604s] Copying ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info to /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages/coppeliasim_ros2_tools-0.0.0-py3.8.egg-info
+[0.604s] running install_scripts
+[0.616s] Installing coppeliasim_ros2_interface script to /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/coppeliasim_ros2_tools
+[0.616s] writing list of installed files to '/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/install.log'
+[0.632s] Invoked command in '/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/src/coppeliasim_ros2_tools' returned '0': PYTHONPATH=/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/prefix_override:/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/coppeliasim_ros2_tools build --build-base /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/build install --record /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/install.log --install-scripts $base/lib/coppeliasim_ros2_tools --single-version-externally-managed

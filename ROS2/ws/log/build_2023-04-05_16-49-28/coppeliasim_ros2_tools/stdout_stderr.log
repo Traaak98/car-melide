@@ -1,0 +1,22 @@
+running egg_info
+writing ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/PKG-INFO
+writing dependency_links to ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/dependency_links.txt
+writing entry points to ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/entry_points.txt
+writing requirements to ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/requires.txt
+writing top-level names to ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/top_level.txt
+reading manifest file '../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/SOURCES.txt'
+writing manifest file '../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/SOURCES.txt'
+running build
+running build_py
+copying coppeliasim_ros2_tools/coppeliasim_ros2_interface.py -> /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/build/lib/coppeliasim_ros2_tools
+running install
+running install_lib
+copying /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/build/lib/coppeliasim_ros2_tools/coppeliasim_ros2_interface.py -> /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages/coppeliasim_ros2_tools
+byte-compiling /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages/coppeliasim_ros2_tools/coppeliasim_ros2_interface.py to coppeliasim_ros2_interface.cpython-38.pyc
+running install_data
+running install_egg_info
+removing '/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages/coppeliasim_ros2_tools-0.0.0-py3.8.egg-info' (and everything under it)
+Copying ../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info to /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/python3.8/site-packages/coppeliasim_ros2_tools-0.0.0-py3.8.egg-info
+running install_scripts
+Installing coppeliasim_ros2_interface script to /home/clara/Desktop/simu/proket/car-melide/ROS2/ws/install/coppeliasim_ros2_tools/lib/coppeliasim_ros2_tools
+writing list of installed files to '/home/clara/Desktop/simu/proket/car-melide/ROS2/ws/build/coppeliasim_ros2_tools/install.log'
