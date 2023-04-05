@@ -1,0 +1,16 @@
+package.xml
+setup.cfg
+setup.py
+../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/PKG-INFO
+../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/SOURCES.txt
+../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/dependency_links.txt
+../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/entry_points.txt
+../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/requires.txt
+../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/top_level.txt
+../../build/coppeliasim_ros2_tools/coppeliasim_ros2_tools.egg-info/zip-safe
+coppeliasim_ros2_tools/__init__.py
+coppeliasim_ros2_tools/coppeliasim_ros2_interface.py
+resource/coppeliasim_ros2_tools
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py
