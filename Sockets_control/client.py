@@ -16,8 +16,10 @@ __status__ = "Production"
 import socket
 import os
 import pygame
+import numpy as np
 from math import pi
 from pygame.locals import *
+from Regulateur import regulator as reg
 
 STEERING, SPEED = 0, 0
 
@@ -37,7 +39,7 @@ def display(str : str, x=0, y=0) -> None:
     screen.blit(text, textRect)
     pygame.display.update()
 
-def client() -> None:
+def client(clavier: bool) -> None:
     """Client function
     """
     global STEERING, SPEED
@@ -55,33 +57,39 @@ def client() -> None:
         theta = float(theta.split(':')[1])
         omega = float(omega.split(':')[1])
 
-        display("STEERING : " + str(round(STEERING,4)), y=-20)
-        display("SPEED : " + str(round(SPEED,4)), y=20)
-        display("RIGHT: +Steering", x=-WINDOW_SIZE[0]//4, y=-100)
-        display("LEFT: -Steering", x=WINDOW_SIZE[0]//4, y=-100)
-        display("UP: +Speed", x=-WINDOW_SIZE[0]//4, y=-80)
-        display("DOWN: -Speed", x=WINDOW_SIZE[0]//4, y=-80)
-        display("ESC: Quit", y=100)
+        if clavier:
+            display("STEERING : " + str(round(STEERING,4)), y=-20)
+            display("SPEED : " + str(round(SPEED,4)), y=20)
+            display("RIGHT: +Steering", x=-WINDOW_SIZE[0]//4, y=-100)
+            display("LEFT: -Steering", x=WINDOW_SIZE[0]//4, y=-100)
+            display("UP: +Speed", x=-WINDOW_SIZE[0]//4, y=-80)
+            display("DOWN: -Speed", x=WINDOW_SIZE[0]//4, y=-80)
+            display("ESC: Quit", y=100)
 
-        pygame.event.pump()
-        keys = pygame.key.get_pressed()
-        if keys[K_ESCAPE]:
-            run = False
-            message = "exit"
-            sock.send(message.encode())
-        elif keys[K_RIGHT]:
-            STEERING += 0.01
-        elif keys[K_LEFT]:
-            STEERING -= 0.01
-        elif keys[K_UP]:
-            SPEED += 0.1
-        elif keys[K_DOWN]:
-            SPEED -= 0.1
+            pygame.event.pump()
+            keys = pygame.key.get_pressed()
+            if keys[K_ESCAPE]:
+                run = False
+                message = "exit"
+                sock.send(message.encode())
+            elif keys[K_RIGHT]:
+                STEERING += 0.01
+            elif keys[K_LEFT]:
+                STEERING -= 0.01
+            elif keys[K_UP]:
+                SPEED += 0.1
+            elif keys[K_DOWN]:
+                SPEED -= 0.1
+            screen.fill((159, 182, 205))
+        
+        else:
+            STEERING, SPEED = reg.regulateur_vector([x, y, theta, omega], (0,0), np.array([[1,0],[0,1]]), 10)
+            print(STEERING, SPEED)
 
-        if STEERING > 180:
-            STEERING = 180
-        elif STEERING < -180:
-            STEERING = -180
+        if STEERING > 60:
+            STEERING = 60
+        elif STEERING < -60:
+            STEERING = -60
 
         if SPEED > speedmax:
             SPEED = speedmax
@@ -91,8 +99,6 @@ def client() -> None:
         message = "STEERING:" + str(STEERING) + ",SPEED:" + str(SPEED)
         sock.send(message.encode())
 
-        screen.fill((159, 182, 205))
-
     sock.close()
 
 if __name__ == '__main__':
@@ -100,12 +106,19 @@ if __name__ == '__main__':
     pygame.font.init()
 
     HOST = socket.gethostname()
-    PORT = 5398
-    FONT = pygame.font.Font(None, 24)
-    WINDOW_SIZE = (320, 240)
+    PORT = 5397
+    choix = input("Choix de la commande (1: clavier, 2: autonome): ")
+    if choix == "1":
+        print("Commande clavier")
+        FONT = pygame.font.Font(None, 24)
+        WINDOW_SIZE = (320, 240)
 
-    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
-    screen = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption('Commande')
+        os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
+        screen = pygame.display.set_mode(WINDOW_SIZE)
+        pygame.display.set_caption('Commande')
 
-    client()
+        client(True)
+    else:
+        print("Commande autonome")
+
+        client(False)

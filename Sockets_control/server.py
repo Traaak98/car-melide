@@ -17,7 +17,7 @@ __status__ = "Production"
 
 import socket
 
-PORT = 5398
+PORT = 5397
 
 def sysCall_thread() -> None:
     sim.addLog(sim.verbosity_scriptinfos, "Server started")

@@ -58,7 +58,7 @@ def phi_dphi(X, centre, Morph):
 
         return np.array([[dxx,dxy],[dyx,dyy]])
 
-    x, y, theta, _ = X.flatten()
+    x, y, theta, _ = X
     dpdt = np.array([[np.cos(theta)], [np.sin(theta)]])
 
     cx, cy = centre
@@ -94,17 +94,13 @@ def regulateur_vector(X, centre, Morph, w_cons):
 
     vec, dvec = phi_dphi(X, centre, Morph)
 
-    x, y, theta, w = X.flatten()
+    x, y, theta, w = X
     v = theta-np.arctan2(vec[1],vec[0])
     dv = (-dvec[0]*vec[1]+dvec[1]*vec[0])/np.linalg.norm(vec)**2
     
-    u1max = 1.5
     u1 = -1*np.mod(v+np.pi,2*np.pi)-np.pi + dv
-    u1 = np.clip(u1, -u1max, u1max)
 
-    u2max = 10
-    u2 = w + 0.1*(w_cons - w)
-    u2 = np.clip(u2, -u2max, u2max)
+    u2 = w + 0.05*(w_cons - w)
 
     return np.array([u1, u2])  
 
