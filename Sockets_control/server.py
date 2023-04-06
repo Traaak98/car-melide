@@ -17,7 +17,7 @@ __status__ = "Production"
 
 import socket
 
-PORT = 5397
+PORT = 8081
 
 def sysCall_thread() -> None:
     sim.addLog(sim.verbosity_scriptinfos, "Server started")
@@ -36,14 +36,14 @@ def sysCall_thread() -> None:
         
         position = sim.getObjectPosition(chassis, -1)
         orientation = sim.getObjectOrientation(chassis, -1)
-        
+
         velocity=sim.getJointVelocity(axe_moteur)
         
         objective=sim.getJointTargetVelocity(axe_moteur)
-        sim.addLog(sim.verbosity_scriptinfos, objective)
+        #sim.addLog(sim.verbosity_scriptinfos, objective)
 
-        message = "x: %.3f, y: %.3f, theta: %.3f, omega: %.3f"%(position[0],position[1],orientation[0], velocity)
-        sim.addLog(sim.verbosity_scriptinfos, message)
+        message = "x: %.3f, y: %.3f, theta: %.3f, omega: %.3f"%(position[0],position[1],orientation[2], velocity)
+        #sim.addLog(sim.verbosity_scriptinfos, message)
         c.send(message.encode())
 
         data = c.recv(1024).decode()
