@@ -1,73 +1,133 @@
 import numpy as np
 
-def regulateur_simple(X, consigne, memoire):
-    """ calcule les commandes en fonction des consignes de cap et de vitesse
+def ech(x):
+    return 0.5*(np.sign(x)+1)
+def ech_radial(x,y,r):
+    return 0.5*(np.sign(r**2-(x**2+y**2))+1)
 
-    Args:
-        consigne (numpy.ndarray): [cap_desire, vitesse_desire], en radians et rd/s
-        capteurs (list): [cap, vitesse], en radians et rd/s
-        memoire (list): [*args], memoire à retenir pour les PID
+def repulsive(x,y,cx):
+    def repuls0(x,y): 
+        norm = np.sqrt(x**2+y**2)   
+        return x/norm,y/norm
     
-    Returns:
-        numpy.ndarray: [u1, u2], en radians(guidon) et rd/s
-        memoire_new (list): [*args], memoire mise à jour
-    """
+    z1 =  x-cx
+    z2 =  y
+    w1,w2=repuls0(z1,z2)
+    v1 =  w1
+    v2 =  w2
+    return v1,v2
+def centre_repulsive(x,y,d,r):
+    v1l,v2l=repulsive(x,y,-d/2)
+    v1r,v2r=repulsive(x,y,d/2)
+    v1u,v2u=0,1
+    v1d,v2d=0,-1
+    R=ech(x-d/2)*ech_radial(x-d/2,y,r)  # Right circle
+    L=ech(-x-d/2)*ech_radial(-x-d/2,y,r) # Left
+    U=ech(y)*ech(r-y)*(1-ech(x-d/2))*(1-ech(-x-d/2))   # Up line
+    D=ech(-y)*ech(r+y)*(1-ech(x-d/2))*(1-ech(-x-d/2))  # Down
+    v1=R*v1r+L*v1l+U*v1u+D*v1d
+    v2=R*v2r+L*v2l+U*v2u+D*v2d
+    return v1,v2
 
-    x, y, theta, w = X.flatten()
-    theta_desire, w_desire = consigne
-
-    u1max = 1.5
-    theta_prec, Se_theta = memoire
-    e = theta_desire - theta
-    Se_theta += e
-    de = theta - theta_prec
-
-    u1 = 0.5*e + 0.5*Se_theta + 0.5*de
-    u1 = np.clip(u1, -u1max, u1max)
-
-    u2max = 10
-    u2 = w + 0.1*(w_desire - w)
-    u2 = np.clip(u2, -u2max, u2max)
+def attractive(x,y,cx):
+    def attract0(x,y): 
+        norm = np.sqrt(x**2+y**2)   
+        return -x/norm,-y/norm
     
-    memoire_new = [theta, Se_theta]
-    if len(memoire_new)==len(memoire):
-        return np.array([u1, u2]), memoire_new
-    else :
-        raise ValueError("Vous n'avez pas mis à jour toutes les variables de mémoire")
+    z1 =  x-cx
+    z2 =  y
+    w1,w2=attract0(z1,z2)
+    v1 =  w1
+    v2 =  w2
+    return v1,v2
+def centre_attractive(x,y,d,r):
+    v1l,v2l=attractive(x,y,-d/2)
+    v1r,v2r=attractive(x,y,d/2)
+    v1u,v2u=0,-1
+    v1d,v2d=0,1
+    R=ech(x-d/2)*(1-ech_radial(x-d/2,y,r))  # Right circle
+    L=ech(-d/2-x)*(1-ech_radial(-x-d/2,y,r)) # Left
+    U=ech(y)*ech(y-r)*(1-ech(x-d/2))*(1-ech(-x-d/2))   # Up line
+    D=ech(-y)*ech(-y-r)*(1-ech(x-d/2))*(1-ech(-x-d/2))  # Down
+    v1=R*v1r+L*v1l+U*v1u+D*v1d
+    v2=R*v2r+L*v2l+U*v2u+D*v2d
+    return v1,v2   
+
+def circle(x,y,cx,R):
+    def circle0(x,y):        
+        return -(x**3+y**2*x-x+y),-(y**3+x**2*y-x-y)
+    
+    D=np.array([[R,0],[0,R]])
+    D_=np.linalg.inv(D)
+    z1 =  D_[0,0]*(x-cx) + D_[0,1]*(y)
+    z2 =  D_[1,0]*(x-cx) + D_[1,1]*(y)
+    w1,w2=circle0(z1,z2)
+    v1 =  D[0,0]*w1 + D[0,1]*w2
+    v2 =  D[1,0]*w1 + D[1,1]*w2
+    return v1,v2
+def centre_circuit(x,y,d,r):
+    v1l,v2l=circle(x,y,-d/2,r)
+    v1r,v2r=circle(x,y,d/2,r)
+    v1u,v2u=-1,np.arctan(-y+r)
+    v1d,v2d=1,np.arctan(-y-r)
+    R=ech(x-d/2)  # Right circle
+    L=ech(-x-d/2) # Left
+    U=ech(y)*(1-R)*(1-L)   # Up line
+    D=ech(-y)*(1-R)*(1-L)  # Down
+    v1=R*v1r+L*v1l+U*v1u+D*v1d
+    v2=R*v2r+L*v2l+U*v2u+D*v2d
+    return v1,v2
 
 
 
-def vector_field_circle(x,y, centre, Morph):
-    """Champs de vecteur pour suivre un cercle ou une ellipse
 
-    Args:
-        x (float): position en x du robot
-        y (float): position en y du robot
-        centre (tuple<float,float>): centre du cercle ou de l'ellipse
-        morph (numpy.ndarray): matrice de morphing (2x2)
+def circuit(x,y,a,b,R,largeur):
+    theta=np.arctan2(a[1]-b[1],b[0]-a[0])
 
-    Returns:
-        tuple<float,float>: vecteur à suivre
-        tuple<float,float>: dérivée du vecteur à suivre
-    """
+    D = np.array([[np.cos(theta),np.sin(theta)],[-np.sin(theta),np.cos(theta)]])
+    D_=np.linalg.inv(D)
+    z1 =  D_[0,0]*(x-(a[0]+b[0])/2) + D_[0,1]*(y-(a[1]+b[1])/2)
+    z2 =  D_[1,0]*(x-(a[0]+b[0])/2) + D_[1,1]*(y-(a[1]+b[1])/2)
 
-    cx, cy = centre
-    invMorph = np.linalg.inv(Morph)
-    x1 = invMorph[0, 0] * (x - cx) + invMorph[0, 1] * (y - cy)
-    y1 = invMorph[1, 0] * (x - cx) + invMorph[1, 1] * (y - cy)
+    d = np.sqrt((b[0]-a[0])**2+(b[1]-a[1])**2)
+    c1, c2 = centre_circuit(z1,z2,d,R)
+    a1,a2=centre_attractive(z1,z2,d,R+largeur/2)
+    r1,r2=centre_repulsive(z1,z2,d,R-largeur/2)
+    v1 = c1 + 100*a1 + 100*r1
+    v2 = c2 + 100*a2 + 100*r2
+
+    w1 =  D[0,0]*v1 + D[0,1]*v2
+    w2 =  D[1,0]*v1 + D[1,1]*v2
+
+    return w1,w2
+
+def circuit_plot(x,y,a,b,R,largeur):
+    theta=np.arctan2(a[1]-b[1],b[0]-a[0])
+
+    D = np.array([[np.cos(theta),np.sin(theta)],[-np.sin(theta),np.cos(theta)]])
+    D_=np.linalg.inv(D)
+    z1 =  D_[0,0]*(x-(a[0]+b[0])/2) + D_[0,1]*(y-(a[1]+b[1])/2)
+    z2 =  D_[1,0]*(x-(a[0]+b[0])/2) + D_[1,1]*(y-(a[1]+b[1])/2)
+
+    d = np.sqrt((b[0]-a[0])**2+(b[1]-a[1])**2)
+    c1, c2 = centre_circuit(z1,z2,d,R)
+    a1,a2=centre_attractive(z1,z2,d,R+largeur/2)
+    r1,r2=centre_repulsive(z1,z2,d,R-largeur/2)
+    v1 = 100*a1 + 100*r1
+    v2 = 100*a2 + 100*r2
+
+    w1 =  D[0,0]*v1 + D[0,1]*v2
+    w2 =  D[1,0]*v1 + D[1,1]*v2
+
+    return w1,w2
 
 
-    dx, dy = -x1**3 - y1**2*x1 + x1 - y1, -y1**3 - x1**2*y1 + x1 + y1
-    vecx = Morph[0, 0] * dx + Morph[0, 1] * dy
-    vecy = Morph[1, 0] * dx + Morph[1, 1] * dy
 
-    return [vecx, vecy]
-
-def plot_vector_field(ax, f, centre, Morph, xmin, xmax, ymin, ymax, step):
-    Mx, My = np.arange(xmin, xmax, step), np.arange(ymin, ymax, step)
+def plot_vector_field(ax, f, xlim,ylim, step, *args):
+    Mx, My = np.arange(xlim[0], xlim[1], step), np.arange(ylim[0],ylim[1], step)
     X1, X2 = np.meshgrid(Mx, My)
 
-    VX, VY = f(X1, X2, centre, Morph)
+    VX, VY = f(X1, X2, *args)
     R = np.sqrt(VX ** 2 + VY ** 2)
 
     ax.quiver(Mx, My, VX / R, VY / R)

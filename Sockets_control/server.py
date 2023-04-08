@@ -17,7 +17,7 @@ __status__ = "Production"
 
 import socket
 
-PORT = 8081
+PORT = 8080
 
 def sysCall_thread() -> None:
     sim.addLog(sim.verbosity_scriptinfos, "Server started")

@@ -22,8 +22,11 @@ from pygame.locals import *
 from Regulateur import regulator as reg
 import matplotlib.pyplot as plt
 from time import time
+import threading
 
 STEERING, SPEED = 0, 0
+x,y = 0,0
+clavier = False
 
 def display(str : str, x=0, y=0) -> None:
     """Display text on the screen
@@ -41,23 +44,39 @@ def display(str : str, x=0, y=0) -> None:
     screen.blit(text, textRect)
     pygame.display.update()
 
-def client(clavier: bool) -> None:
+def fig(f,xlim, ylim, step, *args):
+    global x, y
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, aspect='equal')
+
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
+    ax.grid()
+
+    Lx, Ly = [], []
+
+    while True:
+        Lx.append(x); Ly.append(y)
+        ax.clear()
+        ax.plot(Lx, Ly, 'r')
+        ax.plot(x, y, 'bo')
+        ax.grid()
+        reg.plot_vector_field(ax, f, xlim, ylim, step, *args)
+    
+        plt.pause(0.1)
+    
+    plt.show()
+
+def client() -> None:
     """Client function
     """
-    global STEERING, SPEED
+    global STEERING, SPEED, x, y, clavier
 
     sock = socket.socket()
     sock.connect((HOST, PORT))
 
-    Lx, Ly = [], []
-    fig = plt.figure()
-    ax = fig.add_subplot(111, aspect='equal')
-    ax.set_xlim(-10, 10)
-    ax.set_ylim(-10, 10)
-    ax.grid()
-    t0 = time()
-
-    speedmax = 30
+    speedmax = 50
     run = True
     while run:
         data = sock.recv(1024).decode()
@@ -66,18 +85,6 @@ def client(clavier: bool) -> None:
         y = float(y.split(':')[1])
         theta = float(theta.split(':')[1])-pi/2
         omega = -float(omega.split(':')[1])
-
-        if time() - t0 > 0.5:
-            Lx.append(x); Ly.append(y)
-            ax.clear()
-            ax.plot(Lx, Ly, 'r')
-            ax.plot(x, y, 'bo')
-            reg.plot_vector_field(ax, reg.vector_field_circle, (0,5),np.array([[5,0],[0,5]]), -10,10, -10,10, 1)
-            ax.set_xlim(-10, 10)
-            ax.set_ylim(-10, 10)
-            ax.grid()
-            plt.pause(0.001)
-            t0 = time()
 
         if clavier:
             display("STEERING : " + str(round(STEERING,4)), y=-20)
@@ -105,11 +112,9 @@ def client(clavier: bool) -> None:
             screen.fill((159, 182, 205))
         
         else:
-            #vec, dvec = np.array([10,10]),np.array([0,0])
-            vec= reg.vector_field_circle(x,y, (0,5),np.array([[5,0],[0,5]]))
-            vec = vec/np.linalg.norm(vec)*10
+            vec=reg.circuit(x,y,(-5,3), (4,2), 4, 2)
+            vec = (vec/np.linalg.norm(vec))*50 if np.linalg.norm(vec) != 0 else vec
             STEERING, SPEED = reg.regule_vector([x,y,theta,omega], vec)
-            print(f"angle vector field : {np.arctan2(vec[1],vec[0])}, angle robot : {theta}, steering : {STEERING}")
 
 
         STEERING = min(max(STEERING, -np.pi/3), np.pi/3)
@@ -125,7 +130,8 @@ if __name__ == '__main__':
     pygame.font.init()
 
     HOST = socket.gethostname()
-    PORT = 8081
+    PORT = 8080
+    
     choix = input("Choix de la commande (1: clavier, 2: autonome): ")
     if choix == "1":
         print("Commande clavier")
@@ -136,7 +142,10 @@ if __name__ == '__main__':
         screen = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption('Commande')
 
-        client(True)
+        clavier = True
     else:
         print("Commande autonome")
-        client(False)
+        clavier = False
+    
+    threading.Thread(target=client).start()
+    fig(reg.circuit_plot, (-10,10), (-10,10), 0.7, (-5,3), (4,2), 4, 2)
